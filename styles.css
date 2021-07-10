@@ -1,0 +1,16 @@
+* {
+    box-sizing: border-box;
+}
+
+main {
+    display: flex;
+    width: 60vh;
+    flex-wrap: wrap;
+}
+
+.cell{
+    width: 20vh;
+    height: 20vh;
+    font-size: 12vh;
+    border: 1px solid black;
+}
