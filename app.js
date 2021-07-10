@@ -5,20 +5,20 @@ let boardElm = document.querySelector("#board");
 // ------------state----------------//
 const gameState = {};
 
-function buildInitialState() {
+function resetState() {
     gameState.players = ["x", "o"];
     gameState.board = [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null]
+        ["null", "null", "null"],
+        ["null", "null", "null"],
+        ["null", "null", "null"]
       ];
 }
 
-buildInitialState();
+resetState();
 
 // ------------render--------------//
 function renderState() {
-    boardElm.innterHTML = "";
+    boardElm.innerHTML = "";
     for (let i = 0; i < gameState.board.length; i++){
         let sections = gameState.board[i];
         for (let x = 0; x < sections.length; x++){
@@ -33,17 +33,19 @@ function renderState() {
     }
 }
 
-renderState();
-console.log(gameState);
-console.log(boardElm);
-
 // // maybe a dozen or so helper functions for tiny pieces of the interface
 
-// // listeners
-// function onBoardClick() {
-//   // update state, maybe with another dozen or so helper functions...
+// listeners
+let player1 = gameState.players[0];
+let player2 = gameState.players[1];
 
-//   renderState() // show the user the new state
-// }
+boardElm.addEventListener("click", function(event){
+    if (event.target.className === "cell"){
+
+        renderState();
+    }
+});
 
 // $('.board').on('click', onBoardClick); // etc
+
+renderState();
