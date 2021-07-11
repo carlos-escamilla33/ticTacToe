@@ -2,9 +2,9 @@
     box-sizing: border-box;
 }
 
-main {
+#board {
     display: flex;
-    width: 60vh;
+    width: 70vh;
     flex-wrap: wrap;
 }
 
@@ -13,4 +13,8 @@ main {
     height: 20vh;
     font-size: 12vh;
     border: 1px solid black;
+}
+
+.player{
+    display:flex;
 }
