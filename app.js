@@ -3,11 +3,14 @@
 // ------------state----------------//
 const gameState = {};
 
-function resetState() {
+const resetState = () => {
     //This function resets / wipes out the old state and starts over 
     //gameState.players add a property and a value to the gameState object
     //Those two properties are the players described in X and O
-    gameState.players = ["Player X", "Player O"];
+    gameState.playerNames = ["", ""];
+    gameState.playerTurns = ["", ""];
+    gameState.getCurrentPlayer = () => gameState.playerTurns[gameState.currentPlayerIdx];
+    gameState.currentPlayerIdx = 0;
     //gameState.board is the setup of the board which is null or "empty"
     gameState.board = [
         [null, null, null],
@@ -19,27 +22,16 @@ function resetState() {
 // -----------Dom Selectors----------//
 //We're selecting the board ID from the html doc to use in code below
 let boardElm = document.querySelector("#board");
-let buttonElm = document.createElement("button");
-let resetButtonElm = document.createElement("button");
-let playerContainer = document.querySelector("#playersContainer");
-let playerTwo = document.querySelector(".player2");
-
-
+let playersTurnElm = document.querySelector("#playerTurn");
+let resetElm = document.querySelector("#resetButton");
+let playerNamesElm = document.querySelector("#playerNames");
 // ------------render--------------//
-function gameStatePlayers(){
-    playerContainer.innerHTML = "";
-    let player1Title = document.createElement("h2");
-    player1Title.classList.add("player1Title");
-    player1Title.innerHTML = `${gameState.players[0]} :`;
-    playerContainer.append(player1Title);
 
-    let player2Title = document.createElement("h2");
-    player2Title.classList.add("player2Title");
-    player2Title.innerHTML = `${gameState.players[1]} :`;
-    playerContainer.append(player2Title);
+const changeTurn = () => {
+    gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % 2;
 }
 
-function gameStateBoard(){
+const gameStateBoard = () => {
     boardElm.innerHTML = "";
     for (let i = 0; i < gameState.board.length; i++){
         let sections = gameState.board[i];
@@ -60,82 +52,89 @@ function gameStateBoard(){
     }
 }
 
-function inputs(){
+const playerRender = () => {
+    let text;
+    let players;
 
-    let player1Input = document.createElement("input");
-    player1Input.placeholder = "Enter Player1 X Name";
-    player1Input.classList.add("player1");
-    boardElm.append(player1Input);
-
-    let player2Input = document.createElement("input");
-    player2Input.placeholder = "Enter Player2 O Name"
-    player2Input.classList.add("player2");
-    boardElm.append(player2Input);
-
-
+    if (!gameState.playerTurns[0] || !gameState.playerTurns[1]){
+        text = `
+            <input name="player1" placeholder="Enter Player 1">
+            <input name="player2" placeholder="Enter Player 2">
+            <button class="enter">Enter</button>
+        `
+    } else {
+        text = `It's currently ${gameState.getCurrentPlayer()}'s turn.`
+    }
+    playersTurnElm.innerHTML = text;
+     
+    if (!gameState.playerNames[0] || !gameState.playerNames[1]){
+        players = `
+            <h2> Player1 vs Player2 </h2>
+        `
+    } else {
+        players = `
+            <h2> ${gameState.playerNames[0]} vs ${gameState.playerNames[1]} </h2>
+        `
+    }
+    playerNamesElm.innerHTML = players;
 }
 
+const resetButton = () => {
+    let text = `
+        <button class="reset">Reset</button>
+    `
+    resetElm.innerHTML = text;
+}
 
-function renderState() {
-    
-    gameStatePlayers();
+const renderState = () => {
 
     //The cells in the gameboard
     gameStateBoard();
+    playerRender();
+    resetButton();
 
-    //Creating input boxes for player1 and player2
-    inputs();
-
-    // Creating enter button
-    buttonElm.classList.add("enterButton");
-    buttonElm.innerHTML = "Enter";
-    boardElm.append(buttonElm);
-
-    //resetButton
-    resetButtonElm.classList.add("resetButton");
-    resetButtonElm.innerHTML = "Reset Button";
-    boardElm.append(resetButtonElm);
 }
-console.log(boardElm);
-console.log(playerContainer);
+
+
+
 // --------------Event Listeners-------------------//
-buttonElm.addEventListener("click", function(){
-    let playerOne = document.querySelector(".player1").value;
-    let playerTwo = document.querySelector(".player2").value;
-    document.querySelector(".player2").value = "";
-    document.querySelector(".player1").value = "";
+playersTurnElm.addEventListener("click", function(event){
 
-        if (playerOne.length > 0 && playerTwo.length > 0){
-             gameState.players[0] = playerOne.toLowerCase();
-              gameState.players[1] = playerTwo.toLowerCase();
-        } else if (playerOne.length > 0 && playerTwo.length === 0){
-            gameState.players[0] = playerOne.toLowerCase();
-            gameState.players[1] = "computer";
-        } else {
-            alert("Enter player 1 name first");
-        }
-        renderState();
-        document.querySelector(".player1").disabled = true;
-        document.querySelector(".player2").disabled = true;
-});
+    if (event.target.className !== "enter") return;
 
-resetButtonElm.addEventListener("click", function(){
-    resetState();
+    let player1Input = document.querySelector("input[name=player1]");
+    let player1Value = player1Input.value;
+    let player2Input = document.querySelector("input[name=player2]");
+    let player2Value = player2Input.value;
+
+    if (player1Value.length > 0 && player2Value.length > 0){
+        gameState.playerTurns[0] = player1Value.toLowerCase();
+        gameState.playerTurns[1] = player2Value.toLowerCase();
+        gameState.playerNames[0] = player1Value.toLowerCase();
+        gameState.playerNames[1] = player2Value.toLowerCase();
+    } else if (player1Value.length > 0 && !player2Value.length > 0){
+        gameState.playerTurns[0] = player1Value.toLowerCase();
+        gameState.playerTurns[1] = "computer";
+        gameState.playerNames[0] = player1Value.toLowerCase();
+        gameState.playerNames[1] = "computer";
+    }
+
     renderState();
 });
 
 boardElm.addEventListener("click", function(event){
     if (event.target.className === "cell"){
-       event.target.innerHTML = "X";
-    };
-})
+        changeTurn();
+    }
 
-// buttonElm.addEventListener("click", function(){
-//     let playerTwo = document.querySelector(".player2").value;
-//     document.querySelector(".player2").value = "";
+    renderState();
+});
 
-//     gameState.players[1] = playerTwo;
-// })
+resetElm.addEventListener("click", function(){
+    resetState();
+    renderState();
+});
+
 //----------------Bootstrapping---------------------//
 resetState();
 renderState();
