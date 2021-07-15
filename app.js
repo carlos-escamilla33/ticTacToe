@@ -9,13 +9,14 @@ const resetState = () => {
     //Those two properties are the players described in X and O
     gameState.playerNames = ["", ""];
     gameState.playerTurns = ["", ""];
+    gameState.startingMarker = "O";
     gameState.getCurrentPlayer = () => gameState.playerTurns[gameState.currentPlayerIdx];
     gameState.currentPlayerIdx = 0;
     //gameState.board is the setup of the board which is null or "empty"
     gameState.board = [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null]
+        "", "", "",
+        "", "", "",
+        "", "", ""
       ];
 }
 
@@ -34,23 +35,17 @@ const changeTurn = () => {
 const gameStateBoard = () => {
     boardElm.innerHTML = "";
     for (let i = 0; i < gameState.board.length; i++){
-        let sections = gameState.board[i];
-        for (let x = 0; x < sections.length; x++){
-            let square = sections[x];
-
-            // create a cell
-            let cellElm = document.createElement("div");
-             // add a class so we can style it and target it in the click listener
-            cellElm.classList.add("cell");
-            //Add the empty / null space to the cellElm
-            cellElm.innerHTML = square;
-            //Keeping track of the index of the space
-            cellElm.dataset.index = x;
-            //Append the cell to the board
-            boardElm.append(cellElm);
-        }
+        const square = gameState.board[i];
+        
+        // createCell
+        const cellElm = document.createElement("div");
+        cellElm.classList.add("cell");
+        cellElm.innerHTML = square;
+        cellElm.dataset.index = i;
+        boardElm.append(cellElm);
     }
 }
+console.log(boardElm);
 
 const playerRender = () => {
     let text;
@@ -58,8 +53,8 @@ const playerRender = () => {
 
     if (!gameState.playerTurns[0] || !gameState.playerTurns[1]){
         text = `
-            <input name="player1" placeholder="Enter Player 1">
-            <input name="player2" placeholder="Enter Player 2">
+            <input name="player1" placeholder="Enter Player X">
+            <input name="player2" placeholder="Enter Player O">
             <button class="enter">Enter</button>
         `
     } else {
@@ -69,7 +64,7 @@ const playerRender = () => {
      
     if (!gameState.playerNames[0] || !gameState.playerNames[1]){
         players = `
-            <h2> Player1 vs Player2 </h2>
+            <h2> Player X goes first </h2>
         `
     } else {
         players = `
@@ -117,16 +112,27 @@ playersTurnElm.addEventListener("click", function(event){
         gameState.playerTurns[1] = "computer";
         gameState.playerNames[0] = player1Value.toLowerCase();
         gameState.playerNames[1] = "computer";
+    } else if (!player1Value.length > 0 && player2Value.length > 0){
+        gameState.playerTurns[0] = "computer";
+        gameState.playerTurns[1] = player2Value.toLowerCase();
+        gameState.playerNames[0] = "computer";
+        gameState.playerNames[1] = player2Value.toLowerCase();
     }
 
     renderState();
 });
 
 boardElm.addEventListener("click", function(event){
-    if (event.target.className === "cell"){
-        changeTurn();
+    if (event.target.className !== "cell") return
+    
+    let cellIdx = event.target.dataset.index;
+    if (gameState.board[cellIdx] !== ""){
+      return
+    } else {
+        gameState.startingMarker = gameState.startingMarker === "O" ? "X" : "O"
+        gameState.board[cellIdx] = gameState.startingMarker;
     }
-
+    changeTurn();
     renderState();
 });
 
