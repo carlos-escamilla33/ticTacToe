@@ -8,7 +8,7 @@ const resetState = () => {
     //gameState.players add a property and a value to the gameState object
     //Those two properties are the players described in X and O
     gameState.playerTurns = ["", ""];
-    gameState.currentTurn = Math.round(Math.random(0, 1)) === 1 ? "X" : "O";
+    gameState.currentRandomTurn = Math.round(Math.random(0, 1)) === 1 ? "X" : "O";
     gameState.getCurrentPlayer = () => gameState.playerTurns[gameState.currentPlayerIdx];
     gameState.currentPlayerIdx = 0;
     //gameState.board is the setup of the board which is null or "empty"
@@ -34,6 +34,7 @@ const resetState = () => {
 // -----------Dom Selectors----------//
 //We're selecting the board ID from the html doc to use in code below
 let boardElm = document.querySelector("#board");
+let boardCell = document.querySelector("#board .cell");
 let playersTurnElm = document.querySelector("#playerTurn");
 let resetElm = document.querySelector("#resetButton");
 let playerNamesElm = document.querySelector("#playerNames");
@@ -73,77 +74,111 @@ const changeTurn = () => {
 }
 const resetButton = () => {
     let text = `
-        <button class="reset">Reset</button>
+        <button class="reset">Reset Game</button>
     `
     resetElm.innerHTML = text;
 }
 
-const checkWinningConditions = () => {
-    // for (let i = 0; i < gameState.winningPlays.length; i++){
-    //     console.log(i);
-    // }
+const checkWinningConditionsO = () => {
+
+    for (let i = 0; i < gameState.winningPlays.length; i++) {
+        if (gameState.playerOSelections.indexOf(gameState.winningPlays[i][0]) >= 0) {
+            if (gameState.playerOSelections.indexOf(gameState.winningPlays[i][1]) >= 0) {
+                if (gameState.playerOSelections.indexOf(gameState.winningPlays[i][2]) >= 0) {
+                    alert(`${gameState.getCurrentPlayer()} won!`);
+                }
+            }
+        }
+    }
 }
 
-const renderState = () => {
+const checkWinningConditionsX = () => {
+    for (let i = 0; i < gameState.winningPlays.length; i++) {
+        if (gameState.playerXSelections.indexOf(gameState.winningPlays[i][0]) >= 0) {
+            if (gameState.playerXSelections.indexOf(gameState.winningPlays[i][1]) >= 0) {
+                if (gameState.playerXSelections.indexOf(gameState.winningPlays[i][2]) >= 0) {
+                    alert(`${gameState.getCurrentPlayer()} won!`);
+                }
+            }
+        }
+    }
+}
 
-    gameStateBoard();
-    changeTurn();
-    playerRender();
-    resetButton();
-    checkWinningConditions();
+const checkForDraw = () => {
+    for (let i = 0; i <= gameState.board.length; i++){
+        let boardFull = gameState.board[i];
+        console.log(boardFull);
+    }
+}
+
+const aIPlayer = () => {
+    if (gameState.playerTurns[0] === "computer" || gameState.playerTurns[1] === "computer"){
+        console.log("The computer is playing");
+    }
 }
 
 
-
-// --------------Event Listeners-------------------//
-playersTurnElm.addEventListener("click", function (event) {
-
-    if (event.target.className !== "enter") return;
-
-    let player1Input = document.querySelector("input[name=player1]");
-    let player1Value = player1Input.value;
-    let player2Input = document.querySelector("input[name=player2]");
-    let player2Value = player2Input.value;
-
-    if (player1Value.length > 0 && player2Value.length > 0) {
-        gameState.playerTurns[0] = player1Value.toLowerCase();
-        gameState.playerTurns[1] = player2Value.toLowerCase();
-    } else if (player1Value.length > 0 && !player2Value.length > 0) {
-        gameState.playerTurns[0] = player1Value.toLowerCase();
-        gameState.playerTurns[1] = "computer";
-    } else if (!player1Value.length > 0 && player2Value.length > 0) {
-        gameState.playerTurns[0] = "computer";
-        gameState.playerTurns[1] = player2Value.toLowerCase();
+    const renderState = () => {
+        gameStateBoard();
+        changeTurn();
+        playerRender();
+        resetButton();
+        checkWinningConditionsO();
+        checkWinningConditionsX();
+        checkForDraw();
     }
 
-    renderState();
-});
 
-boardElm.addEventListener("click", function (event) {
-    if (event.target.className !== "cell") return
 
-    let cellIdx = event.target.dataset.index;
+    // --------------Event Listeners-------------------//
+    playersTurnElm.addEventListener("click", function (event) {
 
-    if (gameState.board[cellIdx] !== "") {
-        return
-    } else {
-        gameState.currentTurn = gameState.currentTurn === "X" ? "O" : "X";
-        gameState.board[cellIdx] = gameState.currentTurn;
-    }
-    if (gameState.board[cellIdx] === "X"){
-        gameState.playerXSelections.push(parseInt(cellIdx));
-    }
-    if (gameState.board[cellIdx] === "O"){
-        gameState.playerOSelections.push(parseInt(cellIdx));
-    }
-    renderState();
-});
+        if (event.target.className !== "enter") return;
 
-resetElm.addEventListener("click", function () {
+        let player1Input = document.querySelector("input[name=player1]");
+        let player1Value = player1Input.value;
+        let player2Input = document.querySelector("input[name=player2]");
+        let player2Value = player2Input.value;
+
+        if (player1Value.length > 0 && player2Value.length > 0) {
+            gameState.playerTurns[0] = player1Value.toLowerCase();
+            gameState.playerTurns[1] = player2Value.toLowerCase();
+        } else if (player1Value.length > 0 && !player2Value.length > 0) {
+            gameState.playerTurns[0] = player1Value.toLowerCase();
+            gameState.playerTurns[1] = "computer";
+        } else if (!player1Value.length > 0 && player2Value.length > 0) {
+            gameState.playerTurns[0] = "computer";
+            gameState.playerTurns[1] = player2Value.toLowerCase();
+        }
+        aIPlayer();
+        renderState();
+    });
+
+    boardElm.addEventListener("click", function (event) {
+        if (event.target.className !== "cell") return
+
+        let cellIdx = event.target.dataset.index;
+
+        if (gameState.board[cellIdx] !== "") {
+            return
+        } else {
+            gameState.currentRandomTurn = gameState.currentRandomTurn === "X" ? "O" : "X";
+            gameState.board[cellIdx] = gameState.currentRandomTurn;
+        }
+        if (gameState.board[cellIdx] === "X") {
+            gameState.playerXSelections.push(parseInt(cellIdx));
+        }
+        if (gameState.board[cellIdx] === "O") {
+            gameState.playerOSelections.push(parseInt(cellIdx));
+        }
+        renderState();
+    });
+
+    resetElm.addEventListener("click", function () {
+        resetState();
+        renderState();
+    });
+
+    //----------------Bootstrapping---------------------//
     resetState();
     renderState();
-});
-
-//----------------Bootstrapping---------------------//
-resetState();
-renderState();
