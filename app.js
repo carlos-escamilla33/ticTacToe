@@ -17,6 +17,7 @@ const resetState = () => {
         "", "", "",
         "", "", ""
     ];
+    gameState.win = false;
     gameState.playerXSelections = [];
     gameState.playerOSelections = [];
     gameState.winningPlays = [
@@ -52,7 +53,6 @@ const gameStateBoard = () => {
         boardElm.append(cellElm);
     }
 }
-console.log(boardElm);
 
 const playerRender = () => {
     let text;
@@ -72,6 +72,7 @@ const playerRender = () => {
 const changeTurn = () => {
     gameState.currentPlayerIdx = (gameState.currentPlayerIdx + 1) % 2;
 }
+
 const resetButton = () => {
     let text = `
         <button class="reset">Reset Game</button>
@@ -80,12 +81,12 @@ const resetButton = () => {
 }
 
 const checkWinningConditionsO = () => {
-
     for (let i = 0; i < gameState.winningPlays.length; i++) {
         if (gameState.playerOSelections.indexOf(gameState.winningPlays[i][0]) >= 0) {
             if (gameState.playerOSelections.indexOf(gameState.winningPlays[i][1]) >= 0) {
                 if (gameState.playerOSelections.indexOf(gameState.winningPlays[i][2]) >= 0) {
-                    alert(`${gameState.getCurrentPlayer()} won!`);
+                    alert(`${gameState.getCurrentPlayer()} won! Click ResetGame to play again!`);
+                    gameState.win = true;
                 }
             }
         }
@@ -97,7 +98,8 @@ const checkWinningConditionsX = () => {
         if (gameState.playerXSelections.indexOf(gameState.winningPlays[i][0]) >= 0) {
             if (gameState.playerXSelections.indexOf(gameState.winningPlays[i][1]) >= 0) {
                 if (gameState.playerXSelections.indexOf(gameState.winningPlays[i][2]) >= 0) {
-                    alert(`${gameState.getCurrentPlayer()} won!`);
+                    alert(`${gameState.getCurrentPlayer()} won! Click ResetGame to play again!`);
+                    gameState.win = true;
                 }
             }
         }
@@ -105,28 +107,26 @@ const checkWinningConditionsX = () => {
 }
 
 const checkForDraw = () => {
-    for (let i = 0; i <= gameState.board.length; i++){
-        let boardFull = gameState.board[i];
-        console.log(boardFull);
+    if (!gameState.board.includes("") && gameState.win === false|| !gameState.board.includes("") && gameState.win === false){
+        alert(`It's a draw! Click Reset Game to play again!`);
     }
 }
 
 const aIPlayer = () => {
     if (gameState.playerTurns[0] === "computer" || gameState.playerTurns[1] === "computer"){
-        console.log("The computer is playing");
+        // console.log("The computer is playing");
     }
 }
 
 
-    const renderState = () => {
-        gameStateBoard();
-        changeTurn();
-        playerRender();
-        resetButton();
-        checkWinningConditionsO();
-        checkWinningConditionsX();
-        checkForDraw();
-    }
+const renderState = () => {
+
+    gameStateBoard();
+    changeTurn();
+    playerRender();
+    resetButton();
+
+}
 
 
 
@@ -146,11 +146,7 @@ const aIPlayer = () => {
         } else if (player1Value.length > 0 && !player2Value.length > 0) {
             gameState.playerTurns[0] = player1Value.toLowerCase();
             gameState.playerTurns[1] = "computer";
-        } else if (!player1Value.length > 0 && player2Value.length > 0) {
-            gameState.playerTurns[0] = "computer";
-            gameState.playerTurns[1] = player2Value.toLowerCase();
         }
-        aIPlayer();
         renderState();
     });
 
@@ -171,6 +167,9 @@ const aIPlayer = () => {
         if (gameState.board[cellIdx] === "O") {
             gameState.playerOSelections.push(parseInt(cellIdx));
         }
+        checkWinningConditionsO();
+        checkWinningConditionsX();
+        checkForDraw();
         renderState();
     });
 
