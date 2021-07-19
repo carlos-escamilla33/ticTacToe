@@ -44,7 +44,7 @@ const gameStateBoard = () => {
         const cellElm = document.createElement("div");
         cellElm.classList.add("cell");
         cellElm.innerHTML = square;
-        cellElm.dataset.index = i;
+        cellElm.setAttribute("id", i);
         boardElm.append(cellElm);
     }
 }
@@ -112,6 +112,7 @@ const checkForDraw = () => {
     if (gameState.playerTurns[1] === "computer"){
         for (let x = 0; x <= 8; x++){
         }
+
     }
  }
 
@@ -149,7 +150,7 @@ const renderState = () => {
     boardElm.addEventListener("click", function (event) {
         if (event.target.className !== "cell") return
 
-        let cellIdx = event.target.dataset.index;
+        let cellIdx = event.target.id;
 
         if (gameState.board[cellIdx] !== "") {
             return
