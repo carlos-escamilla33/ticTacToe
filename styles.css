@@ -1,5 +1,18 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Tourney&display=swap');
+
 * {
     box-sizing: border-box;
+}
+
+#container {
+    display:grid;
+    justify-content: center;
+}
+
+.title {
+    font-family: 'Tourney', cursive;
+    font-size: 50px;
 }
 
 #board {
@@ -8,7 +21,7 @@
     flex-wrap: wrap;
 }
 
-.cell{
+.cell {
     width: 20vh;
     height: 20vh;
     font-size: 12vh;
@@ -16,6 +29,38 @@
     text-align: center;
 }
 
-.player{
-    display:flex;
+.cell:first-child,
+.cell:nth-child(2),
+.cell:nth-child(3) {
+    border-top: none;
+}
+
+.cell:first-child,
+.cell:nth-child(4),
+.cell:nth-child(7) {
+    border-left: none;
+}
+
+.cell:nth-child(3),
+.cell:nth-child(6),
+.cell:nth-child(9) {
+    border-right: none;
+}
+
+.cell:last-child,
+.cell:nth-child(8),
+.cell:nth-child(7) {
+    border-bottom: none;
+}
+
+input {
+    margin-top: 10px;
+}
+
+.enter {
+    margin-top: 10px;
+}
+
+#resetButton {
+    margin-top: 10px;
 }

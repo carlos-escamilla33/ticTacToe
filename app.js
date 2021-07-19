@@ -4,14 +4,10 @@
 const gameState = {};
 
 const resetState = () => {
-    //This function resets / wipes out the old state and starts over 
-    //gameState.players add a property and a value to the gameState object
-    //Those two properties are the players described in X and O
     gameState.playerTurns = ["", ""];
     gameState.currentRandomTurn = Math.round(Math.random(0, 1)) === 1 ? "X" : "O";
     gameState.getCurrentPlayer = () => gameState.playerTurns[gameState.currentPlayerIdx];
     gameState.currentPlayerIdx = 0;
-    //gameState.board is the setup of the board which is null or "empty"
     gameState.board = [
         "", "", "",
         "", "", "",
@@ -30,22 +26,21 @@ const resetState = () => {
         [0, 4, 8],
         [2, 4, 6]
     ];
+    gameState.randomSpot = Math.floor(Math.random() * gameState.board.length);
+    gameState.openSpaces = [];
 }
 
 // -----------Dom Selectors----------//
-//We're selecting the board ID from the html doc to use in code below
 let boardElm = document.querySelector("#board");
 let boardCell = document.querySelector("#board .cell");
 let playersTurnElm = document.querySelector("#playerTurn");
 let resetElm = document.querySelector("#resetButton");
-let playerNamesElm = document.querySelector("#playerNames");
 // ------------render--------------//
 
 const gameStateBoard = () => {
     boardElm.innerHTML = "";
     for (let i = 0; i < gameState.board.length; i++) {
         const square = gameState.board[i];
-        // createCell
         const cellElm = document.createElement("div");
         cellElm.classList.add("cell");
         cellElm.innerHTML = square;
@@ -59,12 +54,13 @@ const playerRender = () => {
 
     if (!gameState.playerTurns[0] || !gameState.playerTurns[1]) {
         text = `
-            <input name="player1" placeholder="Enter Player 1">
-            <input name="player2" placeholder="Enter Player 2">
-            <button class="enter">Start Game</button>
+            <h3>For single player enter Player1 and Start Game.</h3>
+            <input name="player1" placeholder="Enter Player 1"><br>
+            <input name="player2" placeholder="Enter Player 2"><br>
+            <button type="button" class="enter btn btn-outline-success">Start Game</button>
         `
     } else {
-        text = `It's currently ${gameState.getCurrentPlayer()}'s turn.`
+        text = `<h3>It's currently ${gameState.getCurrentPlayer()}'s turn.</h3>`
     }
     playersTurnElm.innerHTML = text;
 }
@@ -75,7 +71,7 @@ const changeTurn = () => {
 
 const resetButton = () => {
     let text = `
-        <button class="reset">Reset Game</button>
+        <button type="button" class="reset btn btn-outline-danger">Reset Game</button>
     `
     resetElm.innerHTML = text;
 }
@@ -112,12 +108,12 @@ const checkForDraw = () => {
     }
 }
 
-const aIPlayer = () => {
-    if (gameState.playerTurns[0] === "computer" || gameState.playerTurns[1] === "computer"){
-        // console.log("The computer is playing");
+ const cpuPlayerMove = () => {
+    if (gameState.playerTurns[1] === "computer"){
+        for (let x = 0; x <= 8; x++){
+        }
     }
-}
-
+ }
 
 const renderState = () => {
 
@@ -133,7 +129,7 @@ const renderState = () => {
     // --------------Event Listeners-------------------//
     playersTurnElm.addEventListener("click", function (event) {
 
-        if (event.target.className !== "enter") return;
+        if (event.target.className !== "enter btn btn-outline-success") return;
 
         let player1Input = document.querySelector("input[name=player1]");
         let player1Value = player1Input.value;
@@ -170,6 +166,7 @@ const renderState = () => {
         checkWinningConditionsO();
         checkWinningConditionsX();
         checkForDraw();
+        cpuPlayerMove();
         renderState();
     });
 
