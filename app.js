@@ -109,11 +109,17 @@ const checkForDraw = () => {
 }
 
  const cpuPlayerMove = () => {
-    if (gameState.playerTurns[1] === "computer"){
-        for (let x = 0; x <= 8; x++){
-        }
-
-    }
+     let randomSpot = Math.floor(Math.random() * gameState.board.length);
+     if (gameState.playerTurns[1] === "computer"){
+         for (let i = 0; i < gameState.board.length; i++){
+             if (gameState.board[i] === "" && gameState.currentRandomTurn === "X" && gameState.getCurrentPlayer() !== "computer"){
+                 gameState.board[randomSpot] = "O"
+             }
+             if (gameState.board[i] === "" && gameState.currentRandomTurn === "O"){
+                gameState.board[randomSpot] = "X"
+            }
+         }
+     }
  }
 
 const renderState = () => {
