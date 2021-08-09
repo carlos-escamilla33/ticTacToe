@@ -26,8 +26,6 @@ const resetState = () => {
         [0, 4, 8],
         [2, 4, 6]
     ];
-    gameState.randomSpot = Math.floor(Math.random() * gameState.board.length);
-    gameState.openSpaces = [];
 }
 
 // -----------Dom Selectors----------//
@@ -54,7 +52,7 @@ const playerRender = () => {
 
     if (!gameState.playerTurns[0] || !gameState.playerTurns[1]) {
         text = `
-            <h3>For single player enter Player1 and Start Game.</h3>
+            <h3>Enter Player Names</h3>
             <input name="player1" placeholder="Enter Player 1"><br>
             <input name="player2" placeholder="Enter Player 2"><br>
             <button type="button" class="enter btn btn-outline-success">Start Game</button>
@@ -108,20 +106,6 @@ const checkForDraw = () => {
     }
 }
 
- const cpuPlayerMove = () => {
-     let randomSpot = Math.floor(Math.random() * gameState.board.length);
-     if (gameState.playerTurns[1] === "computer"){
-         for (let i = 0; i < gameState.board.length; i++){
-             if (gameState.board[i] === "" && gameState.currentRandomTurn === "X" && gameState.getCurrentPlayer() !== "computer"){
-                 gameState.board[randomSpot] = "O"
-             }
-             if (gameState.board[i] === "" && gameState.currentRandomTurn === "O"){
-                gameState.board[randomSpot] = "X"
-            }
-         }
-     }
- }
-
 const renderState = () => {
 
     gameStateBoard();
@@ -146,9 +130,8 @@ const renderState = () => {
         if (player1Value.length > 0 && player2Value.length > 0) {
             gameState.playerTurns[0] = player1Value.toLowerCase();
             gameState.playerTurns[1] = player2Value.toLowerCase();
-        } else if (player1Value.length > 0 && !player2Value.length > 0) {
-            gameState.playerTurns[0] = player1Value.toLowerCase();
-            gameState.playerTurns[1] = "computer";
+        } else if (!player1Value.length > 0 || !player2Value.length > 0) {
+            alert("Fill Out Both Player Names to Start the Game");
         }
         renderState();
     });
@@ -173,7 +156,6 @@ const renderState = () => {
         checkWinningConditionsO();
         checkWinningConditionsX();
         checkForDraw();
-        cpuPlayerMove();
         renderState();
     });
 
