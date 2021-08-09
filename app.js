@@ -53,9 +53,9 @@ const playerRender = () => {
     if (!gameState.playerTurns[0] || !gameState.playerTurns[1]) {
         text = `
             <h3>Enter Player Names</h3>
-            <input name="player1" placeholder="Enter Player 1"><br>
-            <input name="player2" placeholder="Enter Player 2"><br>
-            <button type="button" class="enter btn btn-outline-success">Start Game</button>
+            <input name="player1" placeholder=" Enter Player 1"><br>
+            <input name="player2" placeholder=" Enter Player 2"><br>
+            <button type="button" class="enter btn btn-lg btn-outline-success">Start Game</button>
         `
     } else {
         text = `<h3>It's currently ${gameState.getCurrentPlayer()}'s turn.</h3>`
@@ -120,7 +120,7 @@ const renderState = () => {
     // --------------Event Listeners-------------------//
     playersTurnElm.addEventListener("click", function (event) {
 
-        if (event.target.className !== "enter btn btn-outline-success") return;
+        if (event.target.className !== "enter btn btn-lg btn-outline-success") return;
 
         let player1Input = document.querySelector("input[name=player1]");
         let player1Value = player1Input.value;
